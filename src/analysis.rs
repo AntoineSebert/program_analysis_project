@@ -66,10 +66,14 @@ fn worklist<W: Worklist<NodeIndex>, R: std::cmp::PartialEq, A: Analyzer<R>>(prog
 	res
 }
 
-pub fn analyze(program: FlowGraph, analysis: String) -> HashMap<NodeIndex, Sign> {
-	let sd = SignDetecter {};
+pub fn analyze(program: FlowGraph, analysis: String) -> Result<HashMap<NodeIndex, Sign>, String> {
+	if program.0.node_count() == 0 {
+		Err("The flow graph is empty.".to_string())
+	} else {
+		let sd = SignDetecter {};
 
-	let result = worklist::<FifoWorklist<NodeIndex>, Sign, SignDetecter>(program, sd);
+		let result = worklist::<FifoWorklist<NodeIndex>, Sign, SignDetecter>(program, sd);
 
-	result
+		Ok(result)
+	}
 }

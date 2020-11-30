@@ -317,7 +317,7 @@ pub mod expr {
 	#[derive(Debug, Clone)]
 	pub enum BooleanExpr {
 		BooleanLiteral(bool),
-		UnaryOperation(super::ops::BinaryOp, Box<BooleanExpr>), // notoperation generalized
+		NotOperation(Box<BooleanExpr>),
 		RelationalOperation(ArithmeticExpr, super::ops::RelationalOp, ArithmeticExpr),
 		BinaryOperation(Box<BooleanExpr>, super::ops::BinaryOp, Box<BooleanExpr>),
 	}
@@ -328,7 +328,7 @@ pub mod expr {
 
 			match &*self {
 				BooleanLiteral(boolean) => write!(f, "{boolean}"),
-				UnaryOperation(op, boolex) => write!(f, "{op} {boolex}"),
+				NotOperation(boolex) => write!(f, "-{boolex}"),
 				RelationalOperation(arex1, relop, arex2) => write!(f, "{arex1} {relop} {arex2}"),
 				BinaryOperation(boolex1, binop, boolex2) => write!(f, "{boolex1} {binop} {boolex2}"),
 			}
@@ -357,7 +357,7 @@ pub mod expr {
 }
 
 pub mod stmt {
-	use std::{convert::TryFrom, fmt::{self, Display, Formatter}};
+	use std::fmt::{self, Display, Formatter};
 	use super::{expr::{ArithmeticExpr, BooleanExpr, LvalueExpr}, decl::Declaration};
 
 	pub type Scope = (Vec<Declaration>, Vec<Statement>);
@@ -367,9 +367,9 @@ pub mod stmt {
 	pub enum Statement {
 		LvalueAssign(LvalueExpr, ArithmeticExpr),
 		RecordAssign(String, Vec<ArithmeticExpr>),
-		If(BooleanExpr, Box<Statement>),
-		IfElse(BooleanExpr, Box<Statement>, Box<Statement>),
-		While(BooleanExpr, Box<Statement>),
+		If(BooleanExpr, Box<Scope>),
+		IfElse(BooleanExpr, Box<Scope>, Box<Scope>),
+		While(BooleanExpr, Box<Scope>),
 		Read(LvalueExpr),
 		Write(ArithmeticExpr),
 		Break,
@@ -391,27 +391,13 @@ pub mod stmt {
 				Write(arex) => write!(f, "write {arex};"),
 				Break => write!(f, "break;"),
 				Continue => write!(f, "continue;"),
-				Scope((decls, stmts)) => if decls.len() == 0 && stmts.len() == 0 {
+				Scope((decls, stmts)) => if decls.is_empty() && stmts.is_empty() {
 					write!(f, ";")
 				} else if decls.len() + stmts.len() == 1 {
 					write!(f, "{:?} {:?}", decls, stmts)
 				} else {
-					write!(f, "{{{:?} {:?}}}", decls, stmts)
+					write!(f, "{{\n{:?}\n{:?}\n}}", decls, stmts)
 				}
-			}
-		}
-	}
-
-	impl TryFrom<String> for Statement {
-		type Error = String;
-
-		fn try_from(value: String) -> Result<Self, Self::Error> {
-			use Statement::*;
-
-			match value.as_str() {
-				"break" => Ok(Break),
-				"continue" => Ok(Continue),
-				_ => Err(format!("Unknown keyword statement: '{value}'."))
 			}
 		}
 	}

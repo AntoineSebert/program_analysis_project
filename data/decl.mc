@@ -4,9 +4,9 @@ float b;
 
 bool test;
 
-int[2] a;
+int[2] c;
 
-int[0xA] a;
+int[0xA] d;
 
 int[2, 6, 5] multi;
 

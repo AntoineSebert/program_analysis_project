@@ -23,7 +23,7 @@ pub struct FifoWorklist<T> {
 
 /// First-in Last-out data management.
 impl<T: Clone + PartialEq> Worklist<T> for FiloWorklist<T> {
-	fn empty(&self) -> bool { self.data.len() == 0 }
+	fn empty(&self) -> bool { self.data.is_empty() }
 
 	/// No duplicates.
 	fn insert(&mut self, val: T) -> Option<T> {
@@ -49,7 +49,7 @@ impl<T> Default for FiloWorklist<T> {
 
 /// First-in First-out data management.
 impl<T: Clone + PartialEq> Worklist<T> for FifoWorklist<T> {
-	fn empty(&self) -> bool { self.data.len() == 0 }
+	fn empty(&self) -> bool { self.data.is_empty() }
 
 	/// No duplicates.
 	fn insert(&mut self, val: T) -> Option<T> {

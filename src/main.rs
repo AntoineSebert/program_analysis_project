@@ -28,12 +28,16 @@ struct Cli {
 }
 
 fn main() {
-	println!("Hello, world!");
 	let args = Cli::from_args();
 
+	println!("Lexing...");
 	if let Ok(tokens) = lex(&args.path.as_path()) {
-		let ast = parse(tokens);
-		let fg = flow(ast);
-		analyze(fg, args.analysis);
+		println!("Parsing...");
+		if let Ok(ast) = parse(tokens) {
+			println!("Flow graph generation...");
+			let fg = flow(ast);
+			println!("Analyzing...");
+			analyze(fg, args.analysis);
+		}
 	}
 }

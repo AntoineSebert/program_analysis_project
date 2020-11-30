@@ -90,10 +90,8 @@ pub mod keyword {
 		Continue,
 		Else,
 		False,
-		Fst,
 		If,
 		Read,
-		Snd,
 		True,
 		While,
 		Write,
@@ -109,10 +107,8 @@ pub mod keyword {
 				Continue => write!(f, "continue"),
 				Else => write!(f, "else"),
 				False => write!(f, "false"),
-				Fst => write!(f, "fst"),
 				If => write!(f, "if"),
 				Read => write!(f, "read"),
-				Snd => write!(f, "snd"),
 				True => write!(f, "true"),
 				While => write!(f, "while"),
 				Write => write!(f, "write"),
@@ -126,20 +122,19 @@ pub mod keyword {
 
 		fn try_from(value: String) -> Result<Self, Self::Error> {
 			use Keyword::*;
+			use crate::lexer::keyword;
 
 			match value.as_str() {
 				"break" => Ok(Break),
 				"continue" => Ok(Continue),
 				"else" => Ok(Else),
 				"false" => Ok(False),
-				"fst" => Ok(Fst),
 				"if" => Ok(If),
 				"read" => Ok(Read),
-				"snd" => Ok(Snd),
 				"true" => Ok(True),
 				"while" => Ok(While),
 				"write" => Ok(Write),
-				_ => if let Ok(t) = crate::lexer::keyword::Type::try_from(value.clone()) {
+				_ => if let Ok(t) = keyword::Type::try_from(value.clone()) {
 					Ok(Type(t))
 				} else {
 					Err(format!("Unknown keyword '{value}'."))
@@ -528,7 +523,7 @@ pub fn lex(path: &Path) -> Result<Vec<Token>, String> {
 							}
 						}
 
-						while buff.len() != 0 {
+						while !buff.is_empty() {
 							match buff.len() {
 								1 => tokens.push(Token::Symbol(buff.remove(0))),
 								2 => if let Ok(d) = symbol::Symbol::try_from(buff[0..=1].to_vec()) {
@@ -559,9 +554,11 @@ pub fn lex(path: &Path) -> Result<Vec<Token>, String> {
 		}
 	}
 
+	/*
 	for token in &tokens {
 		println!("{:?}", token);
 	}
+	*/
 
 	Ok(tokens)
 }
