@@ -276,7 +276,7 @@ pub mod symbol {
 				Plus => write!(f, "+"),
 				Minus => write!(f, "-"),
 				Star => write!(f, "*"),
-				Slash => write!(f, "*"),
+				Slash => write!(f, "/"),
 				Percent => write!(f, "%"),
 				Caret => write!(f, "^"),
 				Not => write!(f, "!"),

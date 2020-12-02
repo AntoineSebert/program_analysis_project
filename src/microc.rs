@@ -50,6 +50,7 @@ pub mod ops {
 		Add,
 		Sub,
 		Mul,
+		Neg,
 		Div,
 		Rem,
 	}
@@ -60,10 +61,11 @@ pub mod ops {
 
 			match *self {
 				Add => write!(f, "+"),
-				Sub => write!(f, "-"),
-				Mul => write!(f, "*"),
 				Div => write!(f, "/"),
+				Mul => write!(f, "*"),
+				Neg => write!(f, "-"),
 				Rem => write!(f, "%"),
+				Sub => write!(f, "-"),
 			}
 		}
 	}
@@ -76,7 +78,7 @@ pub mod ops {
 
 			match value.as_str() {
 				"+" => Ok(Add),
-				"-" => Ok(Sub),
+				"-" => Err(format!("Context needed to parse either Subtraction or Negation operation.")),
 				"*" => Ok(Mul),
 				"/" => Ok(Div),
 				"%" => Ok(Rem),
@@ -135,7 +137,7 @@ pub mod ops {
 
 	impl Display for AssignmentOp {
 		fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-			write!(f, "<")
+			write!(f, ":=")
 		}
 	}
 
